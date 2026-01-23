@@ -1,8 +1,4 @@
 node_modules/
 .env
 db.json
-<<<<<<< HEAD
 dist/
-=======
-dist/
->>>>>>> 1844cd2229e8a63a3d0c447c5933f43e24dfd8f8
