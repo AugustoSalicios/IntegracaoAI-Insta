@@ -1,6 +1,18 @@
 import { error } from "console";
 import fs from "fs/promises";
 import path from "path";
+import { Pool } from "pg";
+import dotenv from 'dotenv'
+
+dotenv.config();
+
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE
+    password: process.env.PASSWORD,
+    port: Number(process.env.DB_PORT)
+})
 
 const CAMINHO_ARQ = path.resolve('db.json');
 
