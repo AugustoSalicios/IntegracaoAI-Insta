@@ -20,11 +20,12 @@ export const query = (text: string, params?: any[]) => {
 }
 
 export const SalvarResumo = async (original: string, resumo: string) => {
-    const sql = 'INSERT TO resumos (texto_original, resumo_gerado) VALUES ($1, $2) RETURNING *';
+    const sql = 'INSERT INTO resumos (textoOriginal, resumoGerado) VALUES ($1, $2) RETURNING *';
     const values = [original, resumo];
 
     try{
         const res = await pool.query(sql, values);
+        console.log("Resumo salvo corretamente");
         return res.rows[0];
     }
     catch(erro){
