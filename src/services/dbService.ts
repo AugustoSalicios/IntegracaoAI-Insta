@@ -3,9 +3,6 @@ import fs from "fs/promises";
 import path from "path";
 import { Pool } from "pg";
 import dotenv from 'dotenv'
-<<<<<<< HEAD
-import { text } from "stream/consumers";
-=======
 
 dotenv.config();
 
@@ -16,34 +13,34 @@ const pool = new Pool({
     password: process.env.PASSWORD,
     port: Number(process.env.DB_PORT)
 })
->>>>>>> 62c9ef5a3f34729b2f31e33e595bf8629162826e
 
-dotenv.config();
+const CAMINHO_ARQ = path.resolve('db.json');
 
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.PASSWORD,
-    port: Number(process.env.DB_PORT)
-})
-
-export const query = (text: string, params?: any[]) => {
-    return pool.query(text, params);
-}
-
-export const SalvarResumo = async (original: string, resumo: string) => {
-    const sql = 'INSERT INTO resumos (textoOriginal, resumoGerado) VALUES ($1, $2) RETURNING *';
-    const values = [original, resumo];
-
+export const salvarNoBanco = async(novoResumo: any) => {
     try{
-        const res = await pool.query(sql, values);
-        console.log("Resumo salvo corretamente");
-        return res.rows[0];
+        let dados = [];
+
+        try{
+            const conteudo = await fs.readFile(CAMINHO_ARQ, 'utf-8');
+            dados = JSON.parse(conteudo);
+        }
+        catch(erro){
+            dados = [];
+        }
+
+        const itemParaSalvar = {
+            id: Date.now(),
+            data: new Date().toISOString(),
+            ... novoResumo
+        }
+
+        dados.push(itemParaSalvar);
+
+        await fs.writeFile(CAMINHO_ARQ, JSON.stringify(dados, null, 2));
+        return itemParaSalvar;
     }
     catch(erro){
-        console.error("Erro ao salvar no banco de dados", erro);
-        throw erro;
+        console.error("Erro ao salvar no banco", erro);
+        throw new Error("Erro de persistência");
     }
-}
-
+};
