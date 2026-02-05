@@ -3,7 +3,20 @@ import fs from "fs/promises";
 import path from "path";
 import { Pool } from "pg";
 import dotenv from 'dotenv'
+<<<<<<< HEAD
 import { text } from "stream/consumers";
+=======
+
+dotenv.config();
+
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE
+    password: process.env.PASSWORD,
+    port: Number(process.env.DB_PORT)
+})
+>>>>>>> 62c9ef5a3f34729b2f31e33e595bf8629162826e
 
 dotenv.config();
 
