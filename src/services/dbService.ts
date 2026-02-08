@@ -14,33 +14,21 @@ const pool = new Pool({
     port: Number(process.env.DB_PORT)
 })
 
-const CAMINHO_ARQ = path.resolve('db.json');
+export const query = (text: string, params?: any[]) => {
+    return pool.query(text, params);
+}
 
-export const salvarNoBanco = async(novoResumo: any) => {
+export const salvarNoBanco = async (original: string, resumo: string) => {
+    const sql = ("INSERT INTO resumos (texto_original, resumo_gerado) VALUES ($1, $2) RETURNING *");
+    const values = [original, resumo];
+
     try{
-        let dados = [];
-
-        try{
-            const conteudo = await fs.readFile(CAMINHO_ARQ, 'utf-8');
-            dados = JSON.parse(conteudo);
-        }
-        catch(erro){
-            dados = [];
-        }
-
-        const itemParaSalvar = {
-            id: Date.now(),
-            data: new Date().toISOString(),
-            ... novoResumo
-        }
-
-        dados.push(itemParaSalvar);
-
-        await fs.writeFile(CAMINHO_ARQ, JSON.stringify(dados, null, 2));
-        return itemParaSalvar;
+        const res = await pool.query(sql, values);
+        console.log("Resumo salvo corretamente");
+        return res.rows[0];
     }
-    catch(erro){
-        console.error("Erro ao salvar no banco", erro);
-        throw new Error("Erro de persistência");
+    catch(Err){
+        console.error("Erro ao salvar no banco de dados", Err);
+        throw Err;
     }
-};
+}
